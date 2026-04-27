@@ -1,0 +1,2712 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Awaken Mafia — игровой клуб авторской ролевой мафии. Записывайтесь на игры, изучайте роли и правила.">
+<meta name="theme-color" content="#0a0a0a">
+<title>Awaken Mafia — Игровой клуб авторской ролевой мафии</title>
+
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #f0eee6;
+  line-height: 1.65;
+  overflow-x: hidden;
+  font-feature-settings: 'kern', 'liga';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea, select { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 { font-family: 'Cinzel', 'Playfair Display', Georgia, serif; font-weight: 600; line-height: 1.2; letter-spacing: 0.02em; }
+
+:root {
+  --gold: #FFD700;
+  --gold-dim: #c9a82c;
+  --gold-deep: #8a7016;
+  --bg: #0a0a0a;
+  --bg-2: #141414;
+  --bg-3: #1c1c1c;
+  --border: rgba(255, 215, 0, 0.18);
+  --border-strong: rgba(255, 215, 0, 0.4);
+  --text: #f0eee6;
+  --text-dim: #a8a499;
+  --red-team: #d63c3c;
+  --black-team: #6b4ba0;
+  --gray-team: #8b8b8b;
+  --shadow-gold: 0 0 30px rgba(255, 215, 0, 0.15);
+}
+
+/* ============ FONTS ============ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============ STARFIELD BACKDROP ============ */
+.stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,215,0,0.4), transparent),
+    radial-gradient(1px 1px at 60% 70%, rgba(255,215,0,0.3), transparent),
+    radial-gradient(1.5px 1.5px at 80% 20%, rgba(255,215,0,0.35), transparent),
+    radial-gradient(1px 1px at 35% 85%, rgba(255,215,0,0.25), transparent),
+    radial-gradient(2px 2px at 90% 60%, rgba(255,215,0,0.3), transparent),
+    radial-gradient(1px 1px at 15% 50%, rgba(255,215,0,0.25), transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,215,0,0.3), transparent);
+  background-size: 800px 800px, 600px 600px, 700px 700px, 500px 500px, 900px 900px, 400px 400px, 650px 650px;
+  opacity: 0.5;
+  animation: drift 80s linear infinite;
+}
+@keyframes drift {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 800px 0, -600px 600px, 700px -700px, -500px 500px, 900px 900px, 400px -400px, 650px 650px; }
+}
+
+/* ============ NAV ============ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 18px 0;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s, border-color 0.3s, padding 0.3s;
+}
+.nav.scrolled {
+  background: rgba(10, 10, 10, 0.92);
+  border-bottom-color: var(--border);
+  padding: 12px 0;
+}
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+}
+.brand-logo { width: 36px; height: 36px; flex-shrink: 0; }
+.brand-name span { display: block; font-size: 11px; letter-spacing: 0.3em; color: var(--text-dim); margin-top: 2px; font-weight: 400; }
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+.nav-links a {
+  position: relative;
+  color: var(--text-dim);
+  transition: color 0.2s;
+  padding: 4px 0;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  padding: 10px 20px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.nav-cta:hover { background: var(--gold); color: #0a0a0a; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+
+.nav-toggle { display: none; width: 40px; height: 40px; align-items: center; justify-content: center; }
+.nav-toggle span { display: block; width: 22px; height: 1.5px; background: var(--gold); position: relative; transition: 0.3s; }
+.nav-toggle span::before, .nav-toggle span::after { content: ''; position: absolute; left: 0; width: 22px; height: 1.5px; background: var(--gold); transition: 0.3s; }
+.nav-toggle span::before { top: -7px; }
+.nav-toggle span::after { top: 7px; }
+.nav-toggle.open span { background: transparent; }
+.nav-toggle.open span::before { top: 0; transform: rotate(45deg); }
+.nav-toggle.open span::after { top: 0; transform: rotate(-45deg); }
+
+/* ============ HERO ============ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  z-index: 1;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255,215,0,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-inner { max-width: 900px; position: relative; z-index: 2; }
+.hero-eye {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 32px;
+  animation: floatEye 6s ease-in-out infinite, fadeInUp 1s ease-out;
+}
+@keyframes floatEye {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.hero-title {
+  font-size: clamp(38px, 7vw, 78px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: linear-gradient(180deg, #fff8d6 0%, var(--gold) 50%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 16px;
+  animation: fadeInUp 1.1s ease-out 0.2s both;
+}
+.hero-sub {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 2vw, 16px);
+  letter-spacing: 0.4em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  animation: fadeInUp 1.1s ease-out 0.4s both;
+}
+.hero-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 auto 32px;
+  max-width: 280px;
+  animation: fadeInUp 1.1s ease-out 0.5s both;
+}
+.hero-divider .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.hero-divider .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+.hero-tag {
+  font-size: clamp(16px, 2.4vw, 19px);
+  color: #d8d4c5;
+  max-width: 640px;
+  margin: 0 auto 44px;
+  line-height: 1.7;
+  animation: fadeInUp 1.1s ease-out 0.6s both;
+}
+.hero-ctas {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeInUp 1.1s ease-out 0.8s both;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary {
+  background: var(--gold);
+  color: #0a0a0a;
+  box-shadow: 0 0 0 1px var(--gold);
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s;
+}
+.btn-primary:hover::before { left: 100%; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,215,0,0.4), 0 0 0 1px var(--gold); }
+.btn-secondary {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+.btn-secondary:hover { background: rgba(255,215,0,0.1); transform: translateY(-2px); }
+.btn-tg { padding: 18px 36px; font-size: 15px; }
+.btn-tg svg { transition: transform 0.3s; }
+.btn-tg:hover svg { transform: translateX(4px); }
+
+.hero-tertiary {
+  display: inline-block;
+  margin-top: 28px;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 4px;
+  transition: all 0.3s;
+  animation: fadeInUp 1.1s ease-out 1s both;
+}
+.hero-tertiary:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+.hero-scroll {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: fadeIn 2s ease-out 1.2s both;
+}
+.hero-scroll::after {
+  content: '';
+  width: 1px; height: 40px;
+  background: linear-gradient(180deg, var(--gold), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+/* ============ SECTION COMMON ============ */
+.section {
+  position: relative;
+  padding: 100px 24px;
+  z-index: 1;
+}
+.section-inner { max-width: 1280px; margin: 0 auto; }
+.section-head { text-align: center; margin-bottom: 64px; }
+.section-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: inline-block;
+}
+.section-eyebrow::before, .section-eyebrow::after { content: '✧'; margin: 0 12px; opacity: 0.6; }
+.section-title {
+  font-size: clamp(30px, 5vw, 48px);
+  margin-bottom: 18px;
+}
+.section-title .accent { color: var(--gold); }
+.section-lead {
+  max-width: 680px;
+  margin: 0 auto;
+  color: var(--text-dim);
+  font-size: 17px;
+}
+
+/* ============ ABOUT ============ */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}
+.about-card {
+  background: linear-gradient(180deg, rgba(255,215,0,0.04), transparent);
+  border: 1px solid var(--border);
+  padding: 36px 28px;
+  border-radius: 4px;
+  text-align: center;
+  transition: all 0.4s ease;
+  position: relative;
+}
+.about-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: linear-gradient(135deg, var(--gold), transparent, var(--gold)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.about-card:hover { transform: translateY(-6px); }
+.about-card:hover::before { opacity: 1; }
+.about-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 20px;
+  color: var(--gold);
+}
+.about-card h3 { font-size: 19px; margin-bottom: 12px; }
+.about-card p { color: var(--text-dim); font-size: 15px; }
+
+/* ============ ROLES ============ */
+.roles-filter {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.filter-btn {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.filter-btn:hover { color: var(--gold); border-color: var(--gold); }
+.filter-btn.active { background: var(--gold); color: #0a0a0a; border-color: var(--gold); }
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+.role-card {
+  position: relative;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px 22px 22px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  overflow: hidden;
+  text-align: left;
+  width: 100%;
+}
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--team-color, var(--gold));
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+.role-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.role-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-strong);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(255,215,0,0.08);
+}
+.role-card:hover::after { opacity: 1; }
+.role-card:hover::before { opacity: 1; }
+.role-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+.role-card.team-red { --team-color: #d63c3c; }
+.role-card.team-black { --team-color: #8d6cd0; }
+.role-card.team-gray { --team-color: #888; }
+
+.role-icon-wrap {
+  width: 84px; height: 84px;
+  margin: 0 auto 16px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%);
+}
+.role-icon { width: 56px; height: 56px; color: var(--gold); transition: transform 0.4s; }
+.role-card:hover .role-icon { transform: scale(1.1) rotate(-3deg); }
+
+.role-name {
+  font-family: 'Cinzel', serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.role-team {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.role-team .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--team-color); }
+.role-brief {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  text-align: center;
+  min-height: 40px;
+}
+.role-more {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
+/* ============ MODAL ============ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.modal {
+  background: linear-gradient(180deg, #1a1a1a, #0f0f0f);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 40px 36px;
+  position: relative;
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 80px rgba(255,215,0,0.1);
+}
+.modal-backdrop.open .modal { transform: scale(1) translateY(0); }
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  transition: all 0.2s;
+}
+.modal-close:hover { background: var(--gold); color: #0a0a0a; transform: rotate(90deg); }
+.modal-team-bar {
+  height: 3px;
+  width: 60px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+.modal-title {
+  font-size: 32px;
+  color: var(--gold);
+  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+}
+.modal-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+.modal-team .dot { width: 8px; height: 8px; border-radius: 50%; }
+.modal-body p { margin-bottom: 14px; color: #d8d4c5; }
+.modal-body strong { color: var(--gold); font-weight: 600; }
+.modal-rules {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255,215,0,0.04);
+  border-left: 2px solid var(--gold);
+  border-radius: 0 4px 4px 0;
+}
+.modal-rules h4 {
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.modal-rules ul { list-style: none; }
+.modal-rules li {
+  padding: 8px 0 8px 24px;
+  position: relative;
+  font-size: 14.5px;
+  color: #cdc8b8;
+  line-height: 1.6;
+}
+.modal-rules li::before {
+  content: '⚠';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 14px;
+}
+.privacy-body h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: var(--gold);
+  margin: 22px 0 10px;
+  letter-spacing: 0.05em;
+}
+.privacy-body h4:first-of-type { margin-top: 8px; }
+.privacy-body p { font-size: 14.5px; line-height: 1.7; }
+.privacy-body ul li { font-size: 14.5px; padding: 4px 0; }
+.privacy-body a { transition: opacity 0.2s; }
+.privacy-body a:hover { opacity: 0.85; }
+
+/* ============ RULES SECTIONS ============ */
+.rules-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.3s;
+}
+.tab-btn:hover { color: var(--gold); }
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-content { display: none; animation: fadeIn 0.4s ease-out; }
+.tab-content.active { display: block; }
+
+.rule-block {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px 32px;
+  margin-bottom: 18px;
+  transition: all 0.3s;
+}
+.rule-block:hover { border-color: var(--border-strong); transform: translateX(4px); }
+.rule-block h3 {
+  font-size: 20px;
+  color: var(--gold);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rule-block h3 .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  font-size: 14px;
+  font-family: 'Cinzel', serif;
+  flex-shrink: 0;
+}
+.rule-block p, .rule-block li { color: #cdc8b8; line-height: 1.75; font-size: 15.5px; }
+.rule-block ul { padding-left: 0; list-style: none; }
+.rule-block ul li {
+  padding: 6px 0 6px 22px;
+  position: relative;
+}
+.rule-block ul li::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  color: var(--gold);
+  font-size: 8px;
+}
+.rule-block .highlight {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: rgba(255,215,0,0.06);
+  border-left: 2px solid var(--gold);
+  border-radius: 0 4px 4px 0;
+  font-size: 14.5px;
+}
+
+.foul-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+.foul-table th, .foul-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+}
+.foul-table th {
+  background: rgba(255,215,0,0.06);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.foul-table tr:hover td { background: rgba(255,215,0,0.03); }
+
+/* ============ PRICING ============ */
+.price-card {
+  max-width: 540px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(255,215,0,0.06), transparent);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 48px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.price-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(transparent, rgba(255,215,0,0.1), transparent 30%);
+  animation: rotate 8s linear infinite;
+  pointer-events: none;
+}
+.price-card-inner { position: relative; z-index: 1; }
+@keyframes rotate { to { transform: rotate(360deg); } }
+.price-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.price-amount {
+  font-family: 'Cinzel', serif;
+  font-size: 64px;
+  font-weight: 700;
+  background: linear-gradient(180deg, #fff8d6, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.price-amount sub { font-size: 22px; vertical-align: super; }
+.price-note { color: var(--text-dim); margin-bottom: 28px; font-size: 15px; }
+.price-includes {
+  text-align: left;
+  list-style: none;
+  margin: 28px 0;
+  padding: 24px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 4px;
+}
+.price-includes li {
+  padding: 8px 0 8px 30px;
+  position: relative;
+  color: #d8d4c5;
+  font-size: 15px;
+}
+.price-includes li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.cancel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 48px;
+}
+.cancel-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 22px;
+  transition: all 0.3s;
+}
+.cancel-card:hover { border-color: var(--border-strong); }
+.cancel-card .label {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.cancel-card .desc { color: var(--text-dim); font-size: 14.5px; }
+
+/* ============ SCHEDULE ============ */
+.schedule-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.sched-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 28px 24px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.sched-card:hover { transform: translateY(-4px); border-color: var(--border-strong); box-shadow: var(--shadow-gold); }
+.sched-card .icon { font-size: 32px; margin-bottom: 14px; color: var(--gold); }
+.sched-card h4 { font-size: 17px; margin-bottom: 8px; color: var(--gold); }
+.sched-card p { color: var(--text-dim); font-size: 14.5px; }
+
+/* ============ FAQ ============ */
+.faq-list { max-width: 860px; margin: 0 auto; }
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.faq-item.open { border-color: var(--border-strong); }
+.faq-q {
+  width: 100%;
+  padding: 22px 24px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  transition: color 0.2s;
+}
+.faq-q:hover { color: var(--gold); }
+.faq-q .plus {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  position: relative;
+  transition: transform 0.3s;
+}
+.faq-q .plus::before, .faq-q .plus::after {
+  content: '';
+  position: absolute;
+  background: var(--gold);
+}
+.faq-q .plus::before { left: 50%; top: 0; width: 1.5px; height: 100%; transform: translateX(-50%); transition: transform 0.3s; }
+.faq-q .plus::after { top: 50%; left: 0; height: 1.5px; width: 100%; transform: translateY(-50%); }
+.faq-item.open .plus::before { transform: translateX(-50%) rotate(90deg); }
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.faq-a-inner {
+  padding: 0 24px 22px;
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.75;
+}
+.faq-a-inner a { color: var(--gold); border-bottom: 1px solid rgba(255,215,0,0.3); transition: border-color 0.2s; }
+.faq-a-inner a:hover { border-bottom-color: var(--gold); }
+
+/* ============ BOOKING FORM ============ */
+.booking {
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.form-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--bg-3);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 48px 40px;
+  position: relative;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.form-group label .req { color: #d63c3c; }
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 15px;
+  transition: all 0.3s;
+}
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: rgba(0,0,0,0.6);
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.1);
+}
+.form-textarea { resize: vertical; min-height: 90px; }
+.form-select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23FFD700' d='M6 8L0 0h12z'/></svg>"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.form-check input { margin-top: 4px; accent-color: var(--gold); width: 18px; height: 18px; flex-shrink: 0; }
+.form-submit {
+  width: 100%;
+  padding: 18px;
+  background: var(--gold);
+  color: #0a0a0a;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.form-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,215,0,0.3); }
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+}
+.form-success.show { display: block; }
+.form-success svg { width: 64px; height: 64px; color: var(--gold); margin: 0 auto 20px; }
+.form-success h3 { color: var(--gold); font-size: 26px; margin-bottom: 12px; }
+.form-success p { color: var(--text-dim); }
+
+/* Direct contacts under form */
+.direct-contact { max-width: 720px; margin: 56px auto 0; }
+.dc-divider { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.dc-divider span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border-strong), transparent); }
+.dc-divider em { color: var(--text-dim); font-style: normal; font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase; }
+.dc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.dc-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 20px 22px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.dc-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--gold);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.3s ease;
+}
+.dc-card:hover { transform: translateY(-3px); border-color: var(--border-strong); background: var(--bg-2); }
+.dc-card:hover::before { transform: scaleY(1); transform-origin: top; }
+.dc-card svg { width: 22px; height: 22px; color: var(--gold); margin-bottom: 4px; }
+.dc-label {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.dc-value {
+  font-size: 14.5px;
+  color: var(--text);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* ============ GALLERY ============ */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 240px;
+  gap: 12px;
+}
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+.gallery-item.gallery-tall { grid-row: span 2; }
+.gallery-item.gallery-wide { grid-column: span 2; }
+.gallery-item img,
+.gallery-item video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+  display: block;
+}
+.gallery-item:hover { border-color: var(--gold); box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(255,215,0,0.1); }
+.gallery-item:hover img,
+.gallery-item:hover video { transform: scale(1.06); }
+.gallery-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 60px 18px 14px;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.85));
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s, transform 0.4s;
+  pointer-events: none;
+}
+.gallery-item:hover .gallery-overlay { opacity: 1; transform: translateY(0); }
+.gallery-video-overlay { opacity: 1; transform: translateY(0); }
+.gallery-video-overlay::before {
+  content: '▶';
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--gold);
+}
+
+@media (max-width: 900px) {
+  .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 200px; }
+  .gallery-item.gallery-tall { grid-row: span 2; }
+  .gallery-item.gallery-wide { grid-column: span 2; grid-row: span 1; }
+}
+@media (max-width: 480px) {
+  .gallery { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+  .gallery-item.gallery-tall, .gallery-item.gallery-wide { grid-row: span 1; grid-column: span 1; }
+}
+
+/* ============ NEW SCHEDULE ============ */
+.sched-days {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto 48px;
+}
+.day-card {
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255,215,0,0.05), transparent);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px 16px;
+  transition: all 0.3s ease;
+}
+.day-card:hover { transform: translateY(-4px); border-color: var(--gold); box-shadow: var(--shadow-gold); }
+.day-num {
+  font-family: 'Cinzel', serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+  background: linear-gradient(180deg, #fff8d6, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.day-name {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.day-time {
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+.sched-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.meta-card {
+  display: flex;
+  gap: 18px;
+  padding: 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+.meta-card:hover { border-color: var(--border-strong); }
+.meta-icon { width: 32px; height: 32px; color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+.meta-card h4 { font-size: 16px; color: var(--gold); margin-bottom: 6px; letter-spacing: 0.05em; }
+.meta-card p { font-size: 14.5px; color: var(--text-dim); line-height: 1.6; }
+.meta-card a { color: var(--gold); border-bottom: 1px solid rgba(255,215,0,0.3); }
+.meta-card a:hover { border-bottom-color: var(--gold); }
+
+@media (max-width: 540px) {
+  .sched-days { grid-template-columns: 1fr; }
+  .day-card { padding: 22px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; text-align: left; }
+  .day-num { font-size: 28px; margin-bottom: 0; }
+}
+
+/* ============ BLOCK HEADINGS ============ */
+.block-heading {
+  text-align: center;
+  font-size: clamp(24px, 3.5vw, 32px);
+  margin: 90px 0 8px;
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+}
+.block-heading::before, .block-heading::after { content: '✧'; margin: 0 14px; opacity: 0.5; font-size: 0.7em; }
+.block-sub {
+  text-align: center;
+  color: var(--text-dim);
+  margin-bottom: 36px;
+  font-size: 16px;
+}
+
+/* ============ ABONEMENTS ============ */
+.abon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.abon-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,215,0,0.04), transparent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 36px 28px 32px;
+  text-align: center;
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+.abon-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
+  transition: opacity 0.4s;
+}
+.abon-card:hover { transform: translateY(-6px); border-color: var(--border-strong); box-shadow: 0 16px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,215,0,0.08); }
+.abon-card:hover::before { opacity: 1; }
+.abon-featured {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(255,215,0,0.1), rgba(255,215,0,0.02));
+  box-shadow: 0 0 40px rgba(255,215,0,0.1);
+}
+.abon-featured::before { opacity: 1; }
+.abon-tag {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: var(--gold);
+  color: #0a0a0a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+.abon-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.abon-games {
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 16px;
+  letter-spacing: 0.05em;
+}
+.abon-price {
+  font-family: 'Cinzel', serif;
+  font-size: 44px;
+  font-weight: 700;
+  background: linear-gradient(180deg, #fff8d6, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.abon-price span { font-size: 20px; vertical-align: super; margin-left: 2px; }
+.abon-save {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+  letter-spacing: 0.05em;
+}
+.abon-features {
+  list-style: none;
+  text-align: left;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.abon-features li {
+  padding: 7px 0 7px 24px;
+  position: relative;
+  font-size: 14px;
+  color: #d8d4c5;
+}
+.abon-features li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* ============ DISCOUNTS ============ */
+.disc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.disc-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.disc-card:hover { transform: translateY(-4px); border-color: var(--border-strong); }
+.disc-highlight {
+  background: linear-gradient(180deg, rgba(255,215,0,0.1), rgba(255,215,0,0.02));
+  border-color: var(--gold);
+}
+.disc-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: rgba(255,215,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  transition: transform 0.4s;
+}
+.disc-card:hover .disc-icon { transform: scale(1.1) rotate(-5deg); }
+.disc-icon svg { width: 28px; height: 28px; }
+.disc-amount {
+  font-family: 'Cinzel', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+.disc-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+}
+.disc-desc {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  padding: 60px 24px 30px;
+  background: #050505;
+  border-top: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.footer-brand .brand { margin-bottom: 16px; }
+.footer-brand p { color: var(--text-dim); font-size: 14.5px; line-height: 1.7; max-width: 320px; }
+.footer-col h5 {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul a { color: var(--text-dim); font-size: 14.5px; transition: color 0.2s; }
+.footer-col ul a:hover { color: var(--gold); }
+.footer-bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
+.reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; }
+.reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+.reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.15s; }
+.reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.2s; }
+.reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.25s; }
+.reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.3s; }
+.reveal-stagger.visible > *:nth-child(7) { transition-delay: 0.35s; }
+.reveal-stagger.visible > *:nth-child(8) { transition-delay: 0.4s; }
+.reveal-stagger.visible > *:nth-child(n+9) { transition-delay: 0.45s; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 900px) {
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  .nav-toggle { display: flex; }
+  .mobile-menu {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.98);
+    backdrop-filter: blur(10px);
+    padding: 90px 24px 40px;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
+    z-index: 90;
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-menu.open { transform: translateY(0); }
+  .mobile-menu ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .mobile-menu a {
+    display: block;
+    padding: 14px 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.05em;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-menu-ctas { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .mobile-menu-ctas .btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 640px) {
+  .section { padding: 70px 20px; }
+  .hero { padding: 100px 20px 70px; }
+  .form-wrap { padding: 32px 22px; }
+  .price-card { padding: 36px 24px; }
+  .price-amount { font-size: 52px; }
+  .modal { padding: 30px 22px; }
+  .modal-title { font-size: 26px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+  .rule-block { padding: 22px; }
+  .roles-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .role-card { padding: 18px 14px; }
+  .role-icon-wrap { width: 64px; height: 64px; margin-bottom: 12px; }
+  .role-icon { width: 40px; height: 40px; }
+  .role-name { font-size: 16px; }
+  .role-brief { font-size: 12px; min-height: auto; }
+  .tab-btn { padding: 14px 16px; font-size: 12px; }
+  .foul-table th, .foul-table td { padding: 10px 8px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .stars { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="stars" aria-hidden="true"></div>
+
+<!-- ============ NAVIGATION ============ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand" aria-label="Awaken Mafia — на главную">
+      <svg class="brand-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g stroke="#FFD700" stroke-width="3" stroke-linecap="round">
+          <line x1="35" y1="22" x2="33" y2="32"/>
+          <line x1="50" y1="18" x2="50" y2="30"/>
+          <line x1="65" y1="22" x2="67" y2="32"/>
+          <line x1="25" y1="32" x2="28" y2="40"/>
+          <line x1="75" y1="32" x2="72" y2="40"/>
+        </g>
+        <path d="M20 55 Q50 35 80 55 Q50 75 20 55 Z" stroke="#FFD700" stroke-width="3" fill="none"/>
+        <circle cx="50" cy="55" r="9" stroke="#FFD700" stroke-width="2.5" fill="none"/>
+        <circle cx="52" cy="53" r="3" fill="#FFD700"/>
+        <circle cx="50" cy="80" r="2" fill="#FFD700"/>
+      </svg>
+      <div class="brand-name">AWAKEN<span>MAFIA CLUB</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">О клубе</a></li>
+      <li><a href="#roles">Роли</a></li>
+      <li><a href="#schedule">Расписание</a></li>
+      <li><a href="#price">Цены</a></li>
+      <li><a href="#faq">Вопросы</a></li>
+    </ul>
+    <a href="https://t.me/awaken_community_bot" target="_blank" rel="noopener" class="nav-cta">Telegram-бот</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Меню" aria-expanded="false"><span></span></button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#about">О клубе</a></li>
+    <li><a href="#atmosphere">Атмосфера</a></li>
+    <li><a href="#roles">Роли</a></li>
+    <li><a href="#rules">Правила игры</a></li>
+    <li><a href="#club-rules">Правила клуба</a></li>
+    <li><a href="#schedule">Расписание</a></li>
+    <li><a href="#price">Цены и скидки</a></li>
+    <li><a href="#faq">Вопросы</a></li>
+  </ul>
+  <div class="mobile-menu-ctas">
+    <a href="https://t.me/awaken_community_bot" target="_blank" rel="noopener" class="btn btn-primary">Telegram-бот</a>
+    <a href="https://t.me/AwakenMafia" target="_blank" rel="noopener" class="btn btn-secondary">Telegram-чат</a>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="hero-inner">
+    <svg class="hero-eye" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g stroke="#FFD700" stroke-width="3" stroke-linecap="round">
+        <line x1="35" y1="20" x2="33" y2="32"><animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/></line>
+        <line x1="50" y1="14" x2="50" y2="28"><animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/></line>
+        <line x1="65" y1="20" x2="67" y2="32"><animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/></line>
+        <line x1="22" y1="30" x2="26" y2="40"/>
+        <line x1="78" y1="30" x2="74" y2="40"/>
+      </g>
+      <path d="M18 55 Q50 32 82 55 Q50 78 18 55 Z" stroke="#FFD700" stroke-width="3" fill="none"/>
+      <circle cx="50" cy="55" r="11" stroke="#FFD700" stroke-width="2.5" fill="rgba(255,215,0,0.05)"/>
+      <circle cx="52" cy="53" r="3.5" fill="#FFD700"/>
+      <circle cx="50" cy="82" r="2" fill="#FFD700"/>
+    </svg>
+    <h1 class="hero-title">AWAKEN MAFIA</h1>
+    <div class="hero-sub">Авторская ролевая мафия</div>
+    <div class="hero-divider"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
+    <p class="hero-tag">Игровой клуб авторской ролевой мафии в Москве. Каждая ночь — это интрига, каждое слово — улика, а каждая роль раскрывает новую грань вас. Присоединяйтесь к одной из 16 уникальных ролей.</p>
+    <div class="hero-ctas">
+      <a href="https://t.me/awaken_community_bot" target="_blank" rel="noopener" class="btn btn-primary btn-tg">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="20" height="20"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71l-4.14-3.05-1.99 1.93c-.23.23-.42.42-.86.42z"/></svg>
+        Telegram-бот
+      </a>
+      <a href="https://t.me/AwakenMafia" target="_blank" rel="noopener" class="btn btn-secondary btn-tg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" width="20" height="20"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Telegram-чат
+      </a>
+    </div>
+    <a href="#roles" class="hero-tertiary">Или изучите роли клуба →</a>
+  </div>
+  <a href="#about" class="hero-scroll" aria-label="Прокрутить вниз">Узнать больше</a>
+</header>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">О клубе</span>
+      <h2 class="section-title">Игра, в которой <span class="accent">пробуждается</span> характер</h2>
+      <p class="section-lead">Мы создали клуб для тех, кто ценит живое общение, психологические дуэли и яркие эмоции. У нас новички и опытные игроки находят свой стиль — и побеждают.</p>
+    </div>
+    <div class="about-grid reveal-stagger">
+      <div class="about-card">
+        <svg class="about-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2L2 7v6c0 5 3.5 9 10 11 6.5-2 10-6 10-11V7l-10-5z"/><path d="M9 12l2 2 4-4"/></svg>
+        <h3>16 уникальных ролей</h3>
+        <p>Красная, чёрная и серая команды. Маг, Якудза, Дьявол, Девственник и другие — у каждого своя механика и тактика.</p>
+      </div>
+      <div class="about-card">
+        <svg class="about-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <h3>3 игры в неделю</h3>
+        <p>Среда, пятница, воскресенье. Сбор в 19:00, начало в 19:30. Локация в Москве — анонсируется в Telegram-чате.</p>
+      </div>
+      <div class="about-card">
+        <svg class="about-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <h3>Опытный ведущий</h3>
+        <p>Профессиональные ведущие следят за игрой, объясняют правила новичкам и обеспечивают честный ход партии.</p>
+      </div>
+      <div class="about-card">
+        <svg class="about-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <h3>Атмосфера и реквизит</h3>
+        <p>Авторские карты, продуманный реквизит и комфортная локация. Всё, чтобы вы погрузились в игру с первой минуты.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY / ATMOSPHERE ============ -->
+<section class="section" id="atmosphere" style="padding-top: 60px;">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Атмосфера</span>
+      <h2 class="section-title">То, что вас <span class="accent">ждёт</span></h2>
+      <p class="section-lead">Маски, карты, игра света, тишина перед речью — наши вечера запоминаются надолго.</p>
+    </div>
+
+    <div class="gallery reveal">
+      <div class="gallery-item gallery-tall">
+        <img src="assets/atmosphere-1.jpg" alt="Игрок в золотой маске за столом во время игры" loading="lazy">
+        <div class="gallery-overlay"><span>Минута перед речью</span></div>
+      </div>
+      <div class="gallery-item gallery-tall">
+        <img src="assets/atmosphere-2.jpg" alt="Игроки клуба Awaken на крыше во время игры" loading="lazy">
+        <div class="gallery-overlay"><span>Лето на крыше</span></div>
+      </div>
+      <div class="gallery-item gallery-wide">
+        <video autoplay muted loop playsinline preload="metadata" poster="assets/atmosphere-video-poster.jpg">
+          <source src="assets/atmosphere-video.mp4" type="video/mp4">
+        </video>
+        <div class="gallery-overlay gallery-video-overlay"><span>Awaken в движении</span></div>
+      </div>
+      <div class="gallery-item gallery-wide">
+        <img src="assets/atmosphere-3.jpg" alt="Авторские карты ролей и маска ведущего на столе" loading="lazy">
+        <div class="gallery-overlay"><span>Авторский реквизит</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROLES ============ -->
+<section class="section" id="roles" style="background: linear-gradient(180deg, transparent, rgba(255,215,0,0.02), transparent);">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Роли</span>
+      <h2 class="section-title">16 ролей, <span class="accent">три лагеря</span></h2>
+      <p class="section-lead">Каждая роль — это отдельный игровой опыт. Нажмите на карту, чтобы узнать механику, особенности и нюансы.</p>
+    </div>
+
+    <div class="roles-filter reveal" role="group" aria-label="Фильтр по командам">
+      <button class="filter-btn active" data-filter="all">Все роли</button>
+      <button class="filter-btn" data-filter="red">❤ Красные</button>
+      <button class="filter-btn" data-filter="black">👁 Чёрные</button>
+      <button class="filter-btn" data-filter="gray">👻 Серые</button>
+    </div>
+
+    <div class="roles-grid reveal-stagger" id="rolesGrid"></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose" aria-label="Закрыть">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-team-bar" id="modalTeamBar"></div>
+    <h2 class="modal-title" id="modalTitle"></h2>
+    <div class="modal-team" id="modalTeam"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Privacy modal -->
+<div class="modal-backdrop" id="privacyBackdrop" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+  <div class="modal" id="privacyModal">
+    <button class="modal-close" id="privacyClose" aria-label="Закрыть">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-team-bar" style="background: var(--gold)"></div>
+    <h2 class="modal-title" id="privacyTitle">Политика конфиденциальности</h2>
+    <div class="modal-body privacy-body">
+      <p><em style="color:var(--text-dim);font-style:normal;font-size:13px">Последнее обновление: 28 апреля 2026 г.</em></p>
+
+      <h4>1. Общие положения</h4>
+      <p>Настоящая Политика описывает, как игровой клуб «Awaken Mafia» (далее — «Клуб») собирает, использует и защищает персональные данные посетителей сайта и участников игр. Оставляя заявку через форму на сайте, вы подтверждаете согласие с условиями этой Политики.</p>
+
+      <h4>2. Какие данные мы собираем</h4>
+      <p>Через форму записи мы запрашиваем минимум информации, необходимой для связи с вами:</p>
+      <ul style="margin-left:20px;color:#cdc8b8">
+        <li>Имя</li>
+        <li>Номер телефона</li>
+        <li>Никнейм в Telegram (по желанию)</li>
+        <li>Желаемая дата игры (по желанию)</li>
+        <li>Опыт игры в мафию</li>
+        <li>Комментарий к заявке</li>
+      </ul>
+
+      <h4>3. Цели обработки данных</h4>
+      <p>Мы используем ваши данные исключительно для:</p>
+      <ul style="margin-left:20px;color:#cdc8b8">
+        <li>Связи с вами по поводу записи на игру</li>
+        <li>Отправки реквизитов для оплаты</li>
+        <li>Уведомлений о расписании, локации и переносах</li>
+        <li>Ответов на ваши вопросы</li>
+      </ul>
+
+      <h4>4. Хранение и передача данных</h4>
+      <p>Заявки приходят администратору Клуба в Telegram. Мы не передаём ваши данные третьим лицам, не используем их для рекламы и не продаём. Данные хранятся ровно столько, сколько нужно для связи с вами и проведения игры.</p>
+
+      <h4>5. Ваши права</h4>
+      <p>Вы можете в любой момент:</p>
+      <ul style="margin-left:20px;color:#cdc8b8">
+        <li>Запросить, какие данные о вас у нас хранятся</li>
+        <li>Попросить удалить ваши данные из нашей базы</li>
+        <li>Отказаться от рассылок и уведомлений</li>
+      </ul>
+      <p>Для этого напишите администратору в Telegram <a href="https://t.me/Alaska_mc" target="_blank" rel="noopener" style="color:var(--gold)">@Alaska_mc</a> или на email <a href="mailto:awaken.mafia@gmail.com" style="color:var(--gold)">awaken.mafia@gmail.com</a>.</p>
+
+      <h4>6. Cookies и аналитика</h4>
+      <p>Сайт не использует cookies для отслеживания и не подключён к рекламным системам. Если в будущем мы добавим аналитику для улучшения сайта — обновим эту Политику и предупредим посетителей.</p>
+
+      <h4>7. Изменения Политики</h4>
+      <p>Мы оставляем за собой право обновлять эту Политику. Актуальная версия всегда находится по адресу этого сайта. О существенных изменениях мы сообщим в Telegram-чате клуба.</p>
+
+      <h4>8. Контакты</h4>
+      <p>По всем вопросам, связанным с обработкой персональных данных:</p>
+      <p style="padding-left:14px;border-left:2px solid var(--gold);color:#cdc8b8">
+        Telegram: <a href="https://t.me/Alaska_mc" target="_blank" rel="noopener" style="color:var(--gold)">@Alaska_mc</a><br>
+        Email: <a href="mailto:awaken.mafia@gmail.com" style="color:var(--gold)">awaken.mafia@gmail.com</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GAME RULES ============ -->
+<section class="section" id="rules">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Правила игры</span>
+      <h2 class="section-title">Главное, что <span class="accent">нужно знать</span></h2>
+      <p class="section-lead">Не волнуйтесь, если вы новичок — ведущий объяснит всё перед партией. Здесь — основы, чтобы вы пришли подготовленным.</p>
+    </div>
+
+    <div class="rules-tabs reveal" role="tablist">
+      <button class="tab-btn active" data-tab="basic" role="tab">Основы</button>
+      <button class="tab-btn" data-tab="fouls" role="tab">Фолы</button>
+      <button class="tab-btn" data-tab="night" role="tab">Ночь</button>
+      <button class="tab-btn" data-tab="vote" role="tab">Голосование</button>
+    </div>
+
+    <div class="tab-content active" data-content="basic">
+      <div class="rule-block">
+        <h3><span class="num">1</span> Главное правило</h3>
+        <p>Ведущий всегда прав. Все спорные ситуации решает только он. Это база любой партии — без авторитета ведущего игра рассыпается.</p>
+      </div>
+      <div class="rule-block">
+        <h3><span class="num">2</span> Карта роли</h3>
+        <ul>
+          <li>Показывать свою карту другим игрокам <strong>запрещено</strong></li>
+          <li>Нарушение = <strong>ППК</strong> (Победа Противоположной Команды) — автоматическое поражение вашей команды</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h3><span class="num">3</span> Выход из игры</h3>
+        <p>Если вы положили свой номер (добровольно покинули игру):</p>
+        <ul>
+          <li>Уходите без последней речи</li>
+          <li>Баллы за эту игру не начисляются</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h3><span class="num">4</span> Поведение после выбывания</h3>
+        <p>Если вы выбыли из игры — <strong>молчите</strong>. Любое слово после выбывания = минус баллы к рейтингу.</p>
+      </div>
+      <div class="rule-block">
+        <h3><span class="num">5</span> Технический вопрос — знак «Т»</h3>
+        <p>Если у вас есть вопрос по правилам — покажите знак «Т» руками. Когда можно показывать:</p>
+        <ul>
+          <li>После речи игрока</li>
+          <li>Перед сном</li>
+          <li>Сразу после пробуждения</li>
+        </ul>
+        <div class="highlight">❗ Не перебивайте игрока во время его речи — дождитесь подходящего момента. Ведущий остановит игру и ответит на ваш вопрос.</div>
+      </div>
+    </div>
+
+    <div class="tab-content" data-content="fouls">
+      <div class="rule-block">
+        <h3>⚠ Что такое фол?</h3>
+        <p>Фол — это предупреждение за нарушение правил. Чем больше фолов — тем серьёзнее последствия.</p>
+        <table class="foul-table">
+          <thead><tr><th>Количество фолов</th><th>Последствие</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color:var(--gold)">3 фола</strong></td><td>Лишение своей минуты речи. Можно просить слово у других игроков.</td></tr>
+            <tr><td><strong style="color:var(--gold)">4 фола</strong></td><td>Выход из-за стола без последнего слова.</td></tr>
+          </tbody>
+        </table>
+        <div class="highlight">🌙 <strong>Нюанс про ночь:</strong> если у вас 3 фола и вы уходите в ночь — 1 фол сгорает после окончания ночи. На момент пробуждения у вас будет 2 фола.</div>
+      </div>
+      <div class="rule-block">
+        <h3>За что даётся 1 фол</h3>
+        <ul>
+          <li>Говорите в чужую минуту речи без разрешения</li>
+          <li>Вступаете в диалог во время чужой оправдательной речи</li>
+          <li>Продолжаете говорить после того, как ведущий объявил конец вашей речи</li>
+          <li>Произносите слова не в свою речь, влияющие на ход игры</li>
+          <li>Жестикулируете ночью, когда ваша роль должна спать</li>
+          <li>Говорите ночью или перед сном</li>
+          <li>Перебиваете игрока в его речь с вопросом по правилам</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h3>За что сразу 2 фола</h3>
+        <ul>
+          <li>Раскрываете свою роль вслух</li>
+        </ul>
+        <div class="highlight">💡 <strong>Хитрость игры:</strong> если вы вскрываетесь чужой ролью — ведущий озвучит «2 фола», но по факту не поставит их. Это деталь, которую замечают только внимательные игроки.</div>
+      </div>
+    </div>
+
+    <div class="tab-content" data-content="night">
+      <div class="rule-block">
+        <h3>🌙 Ночные ходы</h3>
+        <p><strong>Все роли обязаны совершать ход ночью.</strong> Это правило обеспечивает честность игры — иначе бомж и журналист легко вычислили бы пассивных игроков.</p>
+        <p style="margin-top:14px"><strong>Исключения</strong> (могут пропустить ход):</p>
+        <ul>
+          <li>Мафия</li>
+          <li>Девственник</li>
+          <li>Маньяк</li>
+          <li>Оборотень</li>
+          <li>Фортуна</li>
+          <li>Дьявол</li>
+          <li>Маг</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tab-content" data-content="vote">
+      <div class="rule-block">
+        <h3>🗳️ Как выставить игрока на голосование</h3>
+        <ol style="padding-left:20px;color:#cdc8b8;line-height:1.8">
+          <li>Дождитесь своей минуты</li>
+          <li>Произнесите чёткую формулировку: <strong style="color:var(--gold)">«Я выставляю [ник или номер игрока]»</strong></li>
+          <li>Ведущий подтверждает: «Игрок №... принят»</li>
+        </ol>
+        <div class="highlight">❗ Без правильной формулировки и не в свою минуту — выставление не засчитывается.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLUB RULES ============ -->
+<section class="section" id="club-rules" style="background: rgba(255,215,0,0.015);">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Правила клуба</span>
+      <h2 class="section-title">Атмосфера, которую <span class="accent">мы храним</span></h2>
+      <p class="section-lead">Эти правила помогают сохранять комфортную атмосферу для всех участников.</p>
+    </div>
+
+    <div class="reveal-stagger">
+      <div class="rule-block">
+        <h3><span class="num">1</span> Уважение к участникам и ведущему</h3>
+        <ul>
+          <li>Общайтесь уважительно — грубость и оскорбления недопустимы</li>
+          <li>Любые претензии или замечания принимаются только в вежливой форме — в общем чате или личных сообщениях организаторам</li>
+          <li>Ведущего не перебиваем, не оскорбляем и не комментируем его работу во время игры</li>
+          <li>По всем вопросам — обращайтесь к ведущему или организаторам</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h3><span class="num">2</span> Реклама и рассылки</h3>
+        <p style="color:#d63c3c;font-weight:600;margin-bottom:8px">Запрещено:</p>
+        <ul>
+          <li>Рекламировать личные услуги, сторонние клубы или мероприятия в общем чате</li>
+          <li>Рассылать спам участникам клуба</li>
+        </ul>
+        <p style="color:var(--gold);font-weight:600;margin:12px 0 8px">Разрешено:</p>
+        <ul>
+          <li>Приглашать участников чата на игры клуба «Awaken»</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h3><span class="num">3</span> Расписание игр</h3>
+        <ul>
+          <li>Игры проводятся <strong>три раза в неделю</strong></li>
+          <li>Актуальное расписание всегда доступно в Telegram-боте</li>
+          <li>В случае отмены игры участники получат уведомление заблаговременно</li>
+        </ul>
+      </div>
+      <div class="rule-block">
+        <h3><span class="num">4</span> Дополнительные условия</h3>
+        <ul>
+          <li>Порча реквизита — штраф от <strong>500 до 1 000 ₽</strong> в зависимости от степени ущерба</li>
+          <li>Новичкам не нужно знать правила игры заранее — ведущий объяснит всё перед началом</li>
+          <li>Если хотите подготовиться — ознакомьтесь с правилами через Telegram-бота</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="section" id="price">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Стоимость</span>
+      <h2 class="section-title">Прозрачная <span class="accent">оплата</span></h2>
+      <p class="section-lead">Одна игра, абонемент или приведи друзей и играй бесплатно. Никаких скрытых платежей.</p>
+    </div>
+
+    <div class="price-card reveal">
+      <div class="price-card-inner">
+        <div class="price-tag">Разовая игра</div>
+        <div class="price-amount">1 000<sub>₽</sub></div>
+        <p class="price-note">Предоплата — реквизиты приходят в личные сообщения или через Telegram-бота</p>
+        <ul class="price-includes">
+          <li>Организационный сбор</li>
+          <li>Аренда локации</li>
+          <li>Гонорар ведущего</li>
+          <li>Авторский реквизит и карты</li>
+        </ul>
+        <a href="#booking" class="btn btn-primary" style="width:100%;justify-content:center">Записаться на игру</a>
+      </div>
+    </div>
+
+    <!-- Subscriptions -->
+    <h3 class="block-heading reveal">Абонементы AWAKEN</h3>
+    <p class="block-sub reveal">Чем больше игр — тем выгоднее. Абонементы действуют без ограничения по дням недели.</p>
+    <div class="abon-grid reveal-stagger">
+      <div class="abon-card">
+        <div class="abon-badge">Standard</div>
+        <div class="abon-games">3 игры</div>
+        <div class="abon-price">2 699<span>₽</span></div>
+        <div class="abon-save">Экономия 301 ₽</div>
+        <ul class="abon-features">
+          <li>Цена за игру: 900 ₽</li>
+          <li>Любые дни недели</li>
+          <li>Идеальный старт</li>
+        </ul>
+      </div>
+      <div class="abon-card abon-featured">
+        <div class="abon-tag">Популярный</div>
+        <div class="abon-badge">Gold</div>
+        <div class="abon-games">5 игр</div>
+        <div class="abon-price">4 249<span>₽</span></div>
+        <div class="abon-save">Экономия 751 ₽</div>
+        <ul class="abon-features">
+          <li>Цена за игру: 850 ₽</li>
+          <li>Любые дни недели</li>
+          <li>Лучший выбор большинства</li>
+        </ul>
+      </div>
+      <div class="abon-card">
+        <div class="abon-badge">Ultra</div>
+        <div class="abon-games">7 игр</div>
+        <div class="abon-price">5 599<span>₽</span></div>
+        <div class="abon-save">Экономия 1 401 ₽</div>
+        <ul class="abon-features">
+          <li>Цена за игру: 800 ₽</li>
+          <li>Любые дни недели</li>
+          <li>Максимум игр и выгоды</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Discounts -->
+    <h3 class="block-heading reveal">Скидки и бонусы</h3>
+    <p class="block-sub reveal">Чем активнее вы и ваши друзья — тем выгоднее</p>
+    <div class="disc-grid reveal-stagger">
+      <div class="disc-card">
+        <div class="disc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v6m0 0l-3-3m3 3l3-3"/><circle cx="12" cy="15" r="6"/><path d="M12 12v6"/></svg>
+        </div>
+        <div class="disc-amount">−500 ₽</div>
+        <div class="disc-title">Вторая игра новичка</div>
+        <div class="disc-desc">Заплатили 1000 ₽ за первую игру? Вторая — всего за 500 ₽.</div>
+      </div>
+      <div class="disc-card disc-highlight">
+        <div class="disc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="disc-amount">БЕСПЛАТНО</div>
+        <div class="disc-title">Привёл троих — играешь даром</div>
+        <div class="disc-desc">Приведите 3 новых игроков на вечер — играете без оплаты.</div>
+      </div>
+      <div class="disc-card">
+        <div class="disc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8M8 8l8 8"/></svg>
+        </div>
+        <div class="disc-amount">−30%</div>
+        <div class="disc-title">За каждого друга</div>
+        <div class="disc-desc">Привели одного друга? Получите 30% скидку на свою игру.</div>
+      </div>
+      <div class="disc-card">
+        <div class="disc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4 1.5-7.5L3 9l6.5-.5L12 2z"/></svg>
+        </div>
+        <div class="disc-amount">+200 AWAKEN</div>
+        <div class="disc-title">Бонусы за компанию</div>
+        <div class="disc-desc">Привели 4+ игроков — получите 200 бонусов AWAKEN (1 = 1 ₽). Можно тратить на игры, мероприятия и турниры.</div>
+      </div>
+    </div>
+
+    <!-- Cancel -->
+    <h3 class="block-heading reveal">Правила отмены и переноса</h3>
+    <p class="block-sub reveal">Чтобы не было сюрпризов</p>
+    <div class="cancel-grid reveal-stagger">
+      <div class="cancel-card">
+        <div class="label">Отмена менее 24 ч</div>
+        <div class="desc">Предоплата сгорает</div>
+      </div>
+      <div class="cancel-card">
+        <div class="label">Уважительная причина</div>
+        <div class="desc">Перенос на следующую игру</div>
+      </div>
+      <div class="cancel-card">
+        <div class="label">Вина организаторов</div>
+        <div class="desc">Полный возврат или перенос</div>
+      </div>
+      <div class="cancel-card">
+        <div class="label">Опоздание / ранний уход</div>
+        <div class="desc">Оплата сохраняется в полном объёме</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCHEDULE ============ -->
+<section class="section" id="schedule">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Расписание</span>
+      <h2 class="section-title">Где и когда <span class="accent">мы играем</span></h2>
+      <p class="section-lead">Игры проходят в Москве. Постоянного адреса нет — локацию каждой игры мы анонсируем в Telegram-чате клуба за несколько дней.</p>
+    </div>
+
+    <div class="sched-days reveal-stagger">
+      <div class="day-card">
+        <div class="day-num">СР</div>
+        <div class="day-name">Среда</div>
+        <div class="day-time">19:00 — 00:00</div>
+      </div>
+      <div class="day-card">
+        <div class="day-num">ПТ</div>
+        <div class="day-name">Пятница</div>
+        <div class="day-time">19:00 — 00:00</div>
+      </div>
+      <div class="day-card">
+        <div class="day-num">ВС</div>
+        <div class="day-name">Воскресенье</div>
+        <div class="day-time">19:00 — 00:00</div>
+      </div>
+    </div>
+
+    <div class="sched-meta reveal">
+      <div class="meta-card">
+        <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div>
+          <h4>Сбор и начало</h4>
+          <p>Сбор игроков в <strong>19:00</strong>, игра стартует в <strong>19:30</strong>. Опоздавших ждать не будем — приходите вовремя.</p>
+        </div>
+      </div>
+      <div class="meta-card">
+        <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div>
+          <h4>Локация — Москва</h4>
+          <p>Адрес меняется от игры к игре в зависимости от площадки. Анонс с точным адресом — в <a href="https://t.me/AwakenMafia" target="_blank" rel="noopener">Telegram-чате клуба</a>.</p>
+        </div>
+      </div>
+      <div class="meta-card">
+        <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div>
+          <h4>Возможны переносы</h4>
+          <p>Если набралось мало игроков — игру могут перенести. Уведомление приходит заранее, предоплата возвращается или переносится.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq" style="background: rgba(255,215,0,0.015);">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Вопросы и ответы</span>
+      <h2 class="section-title">Частые <span class="accent">вопросы</span></h2>
+    </div>
+    <div class="faq-list reveal" id="faqList"></div>
+  </div>
+</section>
+
+<!-- ============ BOOKING ============ -->
+<section class="section booking" id="booking">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <span class="section-eyebrow">Запись</span>
+      <h2 class="section-title">Готовы <span class="accent">проснуться?</span></h2>
+      <p class="section-lead">Оставьте заявку — мы свяжемся с вами в течение 24 часов и пришлём реквизиты для оплаты.</p>
+    </div>
+
+    <div class="form-wrap reveal">
+      <form id="bookingForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Имя <span class="req">*</span></label>
+            <input type="text" id="name" name="name" class="form-input" required minlength="2">
+          </div>
+          <div class="form-group">
+            <label for="phone">Телефон <span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" class="form-input" required placeholder="+7 (___) ___-__-__">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="telegram">Telegram</label>
+            <input type="text" id="telegram" name="telegram" class="form-input" placeholder="@username">
+          </div>
+          <div class="form-group">
+            <label for="experience">Опыт игры</label>
+            <select id="experience" name="experience" class="form-select">
+              <option>Новичок — играю впервые</option>
+              <option>Играл несколько раз</option>
+              <option>Опытный игрок</option>
+              <option>Профи</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Желаемая дата игры</label>
+          <input type="date" id="date" name="date" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="message">Комментарий</label>
+          <textarea id="message" name="message" class="form-textarea" placeholder="Например: придём вдвоём с другом"></textarea>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" required id="consent">
+          <span>Я согласен на <a href="#" id="openPrivacy" style="color:var(--gold);text-decoration:underline">обработку персональных данных</a> и ознакомился с <a href="#club-rules" style="color:var(--gold);text-decoration:underline">правилами клуба</a></span>
+        </label>
+
+        <button type="submit" class="form-submit">Отправить заявку</button>
+      </form>
+
+      <div class="form-success" id="formSuccess">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+        <h3>Заявка отправлена!</h3>
+        <p>Мы свяжемся с вами в течение 24 часов и пришлём реквизиты для оплаты.</p>
+      </div>
+    </div>
+
+    <div class="direct-contact reveal">
+      <div class="dc-divider"><span></span><em>или напишите напрямую</em><span></span></div>
+      <div class="dc-grid">
+        <a href="https://t.me/awaken_community_bot" target="_blank" rel="noopener" class="dc-card">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71l-4.14-3.05-1.99 1.93c-.23.23-.42.42-.86.42z"/></svg>
+          <div class="dc-label">Telegram-бот</div>
+          <div class="dc-value">@awaken_community_bot</div>
+        </a>
+        <a href="https://t.me/Alaska_mc" target="_blank" rel="noopener" class="dc-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <div class="dc-label">Админ напрямую</div>
+          <div class="dc-value">@Alaska_mc</div>
+        </a>
+        <a href="https://t.me/AwakenMafia" target="_blank" rel="noopener" class="dc-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <div class="dc-label">Telegram-чат</div>
+          <div class="dc-value">@AwakenMafia</div>
+        </a>
+        <a href="mailto:awaken.mafia@gmail.com" class="dc-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+          <div class="dc-label">Email</div>
+          <div class="dc-value">awaken.mafia@gmail.com</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#top" class="brand">
+        <svg class="brand-logo" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <g stroke="#FFD700" stroke-width="3" stroke-linecap="round">
+            <line x1="35" y1="22" x2="33" y2="32"/><line x1="50" y1="18" x2="50" y2="30"/><line x1="65" y1="22" x2="67" y2="32"/>
+          </g>
+          <path d="M20 55 Q50 35 80 55 Q50 75 20 55 Z" stroke="#FFD700" stroke-width="3" fill="none"/>
+          <circle cx="50" cy="55" r="9" stroke="#FFD700" stroke-width="2.5" fill="none"/>
+          <circle cx="52" cy="53" r="3" fill="#FFD700"/>
+        </svg>
+        <div class="brand-name">AWAKEN<span>MAFIA CLUB</span></div>
+      </a>
+      <p>Игровой клуб авторской ролевой мафии. Где каждая партия — это новая история.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Навигация</h5>
+      <ul>
+        <li><a href="#about">О клубе</a></li>
+        <li><a href="#roles">Роли</a></li>
+        <li><a href="#rules">Правила игры</a></li>
+        <li><a href="#price">Цены</a></li>
+        <li><a href="#booking">Записаться</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Telegram</h5>
+      <ul>
+        <li><a href="https://t.me/awaken_community_bot" target="_blank" rel="noopener">Бот @awaken_community_bot</a></li>
+        <li><a href="https://t.me/AwakenMafia" target="_blank" rel="noopener">Чат клуба</a></li>
+        <li><a href="https://t.me/awaken_community" target="_blank" rel="noopener">Канал клуба</a></li>
+        <li><a href="https://t.me/Alaska_mc" target="_blank" rel="noopener">Админ @Alaska_mc</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Помощь</h5>
+      <ul>
+        <li><a href="mailto:awaken.mafia@gmail.com">awaken.mafia@gmail.com</a></li>
+        <li><a href="#faq">Вопросы и ответы</a></li>
+        <li><a href="#club-rules">Правила клуба</a></li>
+        <li><a href="#price">Отмена и перенос</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Awaken Mafia. Все права защищены.</span>
+    <span>Сделано с интригой ✦</span>
+  </div>
+</footer>
+
+<script>
+/* ============ ROLE DATA ============ */
+const ROLES = [
+  {
+    id: 'komissar', name: 'Комиссар', alias: 'Шериф', team: 'red',
+    icon: 'shield',
+    brief: 'Главный охотник на «чёрных». Каждую ночь проверяет одного игрока.',
+    body: '<p>По команде ведущего <strong>Шериф просыпается ночью и проверяет одного игрока</strong>. Его задача — найти красных 👍 и помочь городу изгнать чёрных 👎. В дальнейшем шериф может намекнуть мирному городу с кем играть, кого убрать.</p>',
+    rules: [
+      'Красная проверка — 👍',
+      'Чёрная проверка — 👎',
+      'Проверка заблокирована — ❌'
+    ]
+  },
+  {
+    id: 'doctor', name: 'Доктор', team: 'red',
+    icon: 'cross',
+    brief: 'Спасает одного игрока за ночь от смерти.',
+    body: '<p>Просыпается ночью по команде ведущего и выбирает для спасения одного игрока, которого, предположительно, убивали данной ночью.</p>',
+    rules: [
+      'Сам себя доктор может лечить только один раз за игру',
+      'Одного и того же игрока можно лечить только через ночь',
+      'Не спасает от убийства фортуной, якудзой и путаной'
+    ]
+  },
+  {
+    id: 'journalist', name: 'Журналист', team: 'red',
+    icon: 'pen',
+    brief: 'Сравнивает двух игроков — в одной они команде или нет.',
+    body: '<p>Просыпается ночью и проверяет любых двух игроков на принадлежность к одной или разным командам (красная, чёрная, серая). Журналист показывает ведущему два номера, и тот жестами отвечает: 👍👍 — в одной команде, 👎👍 — в разных. Цвет команд не называется.</p><p><strong>Пример:</strong> доктор и дон мафии → 👍👎 (разные). Комиссар и шулер → 👍👍 (одна). Маньяк и мафия → 👍👎 (разные).</p>',
+    rules: [
+      'Сравнивать игрока с собой может один раз за игру',
+      'Игроки в одной команде (два чёрных, два красных, два серых) — 👍👍',
+      'Игроки в разных командах — 👍👎',
+      'Если проверка заблокирована — ❌',
+      'Серый лагерь всегда в разных командах с другими'
+    ]
+  },
+  {
+    id: 'putana', name: 'Путана', alias: 'Любовница, Проститутка', team: 'red',
+    icon: 'heart',
+    brief: 'Забирает игрока к себе на ночь — мафия и маньяк промахнутся.',
+    body: '<p>По команде ведущего просыпается ночью и выбирает одного игрока, которого забирает к себе на ночь. Если в выбранного игрока стреляли — это промах, его «не было дома». Если же стреляют в саму путану — игру покидают двое (она и её гость).</p>',
+    rules: [
+      'Подряд каждую ночь одного и того же игрока выбирать нельзя — только через ночь',
+      'К самой себе ходить не может',
+      'Не спасает от казни фортуны и якудзы',
+      'Обращает девственника в мирного жителя'
+    ]
+  },
+  {
+    id: 'shuler', name: 'Шулер', team: 'red',
+    icon: 'cards',
+    brief: 'Перенаправляет выстрел стрелка в любого игрока.',
+    body: '<p>Играет на стороне «красного» города. Просыпается ночью и может забрать стреляющую способность (второй пистолет у стрелка), затем перенаправляет выстрел в одного и того же или другого игрока. Если угадал в игроке стрелка — игрок, в которого направлен выстрел, умирает.</p><p><strong>Пример:</strong> шулер указывает на мафию (забирая её стреляющую способность) и снова на того же игрока — мафия умирает ночью.</p>',
+    rules: [
+      'Ведущий НЕ обозначает, угадал ли шулер со стрелком',
+      'Если шулер выбрал мирного — ничего не происходит, у мирных нет пистолета',
+      'Если цель была вылечена доктором/путаной — она остаётся жива',
+      'Для бомжа ход шулера покажется в игрока, у которого он забирал способность'
+    ]
+  },
+  {
+    id: 'bomzh', name: 'Бомж', team: 'red',
+    icon: 'eye',
+    brief: 'Каждую ночь видит, к кому ходил выбранный игрок.',
+    body: '<p>Бомж — роль слежки. Каждую ночь выбирает одного игрока и наблюдает за ним. Узнаёт, к кому этот игрок ходил, но не узнаёт его роль. Информация помогает выявлять лжецов из «чёрной» команды днём.</p><p><strong>Пример:</strong> ночью бомж указывает на игрока №3, и ведущий показывает, к кому №3 ходил.</p>',
+    rules: [
+      'Если игрок никуда не ходил — ведущий покажет ❌',
+      'Если бомж попал к журналисту — ведущий покажет сразу двух игроков',
+      'Бомж не видит, чью роль маг забирал ночью'
+    ]
+  },
+  {
+    id: 'yakuza', name: 'Якудза', team: 'red',
+    icon: 'sword',
+    brief: 'Если его убьют ночью — забирает убийцу с собой.',
+    body: '<p>Просыпается только в ночь знакомства с ведущим и не просыпается до тех пор, пока его не убьют. Если кто-то убил его ночью — Якудза просыпается, чтобы забрать с собой убийцу.</p><p>Если стрелял одиночка — Якудза автоматически забирает его. Если стреляла мафия — все стрелявшие (Дон и мафия) просыпаются, и Якудза выбирает кого забрать.</p>',
+    rules: [
+      'Если забрал одиночного стрелка — оба уходят с последней речью',
+      'Если забрал мафию — оба уходят без прощальной речи (объявляет ведущий)',
+      'Если умер по вине путаны или шулера — уходит «бесполезно» с последней речью'
+    ]
+  },
+  {
+    id: 'mag', name: 'Маг', team: 'red',
+    icon: 'star',
+    brief: 'Один раз за игру может перевоплотиться в роль умершего.',
+    body: '<p>Один раз за игру может перевоплотиться ролью любого умершего игрока. Если забрал роль мафии — играет за чёрных. Если забрал мирную — играет за красных. Изначально красный.</p>',
+    rules: [
+      'Изначально для шерифа и журналиста — красный',
+      'Может ни в кого не воплощаться. Ночью показывает ❌',
+      'Бомж не видит, чью роль маг забирал',
+      'Если забрал роль — действовать начинает со следующей ночи',
+      'Если забрал чёрную роль — уже в эту ночь является чёрной проверкой'
+    ]
+  },
+  {
+    id: 'fortuna', name: 'Фортуна', team: 'red',
+    icon: 'moon',
+    brief: 'Угадывает «чёрного». Ошиблась — умирает сама.',
+    body: '<p>Просыпается каждую ночь и выбирает «чёрного», по её мнению, игрока. Если игрок окажется мирным — фортуна умрёт. Если чёрным — фортуна казнит его и будет жить.</p>',
+    rules: [
+      'Доктор, путана и влюблённые НЕ могут вылечить казнённого фортуной',
+      'Если фортуна умирает от «кармы» — её тоже нельзя вылечить',
+      'Может пропустить ход, показав ведущему ❌'
+    ]
+  },
+  {
+    id: 'devstvennik', name: 'Девственник', team: 'gray',
+    icon: 'shield',
+    brief: 'Игрок-одиночка, побеждает в финале 1 на 1.',
+    body: '<p>Девственник — игрок-одиночка. Изначально стрелок. Если хоть раз был «изнасилован» путаной — становится обычным мирным жителем. Выигрывает (при отсутствии изнасилования), оставшись один на один с любой чёрной или красной ролью.</p>',
+    rules: [
+      'Для комиссара до похода путаны — чёрный 👎, после — красная проверка 👍',
+      'Может пропускать выстрел',
+      'Может сделать самострел'
+    ]
+  },
+  {
+    id: 'manyak', name: 'Маньяк', team: 'gray',
+    icon: 'skull',
+    brief: 'Одиночка, убивает по ночам. Не знает мафию.',
+    body: '<p>Маньяк — игрок-одиночка. По команде ведущего просыпается ночью и решает, кого убить. С мафией НЕ просыпается и её не знает.</p>',
+    rules: [
+      'Для комиссара показывается как красный 👍, пока есть хоть один чёрный за столом',
+      'Если мафии не осталось — маньяк автоматически становится чёрной проверкой 👎',
+      'Может пропускать выстрел',
+      'Может уйти самострелом'
+    ]
+  },
+  {
+    id: 'mafia', name: 'Мафия', team: 'black',
+    icon: 'fedora',
+    brief: 'Команда от 2 до 5 игроков. Знает друг друга.',
+    body: '<p>Чёрная команда. Количество игроков: <strong>от 2 до 5</strong>. По команде ведущего мафия просыпается ночью и решает, кого убрать из игры.</p>',
+    rules: [
+      'Может пропускать ход',
+      'Может делать самострел'
+    ]
+  },
+  {
+    id: 'don', name: 'Дон мафии', team: 'black',
+    icon: 'crown',
+    brief: 'Глава мафии. Ищет шерифа и принимает решения.',
+    body: '<p>Глава мафии. Принимает конечное решение, кого мафия будет убивать ночью. Также Дон просыпается отдельно и ищет шерифа.</p>',
+    rules: [
+      '👌 — этот игрок шериф',
+      '❌ — этот игрок НЕ шериф'
+    ]
+  },
+  {
+    id: 'advokat', name: 'Адвокат', team: 'black',
+    icon: 'scales',
+    brief: 'Не знает мафию, но играет на её стороне. Даёт иммунитет.',
+    body: '<p>Не знает, кто мафия, и не просыпается с ней. С помощью аналитики определяет, кто мафия, и пытается ей помочь. Каждую ночь может наделить любого игрока (себя — 1 раз за игру) <strong>иммунитетом</strong> от дневного голосования и ночной проверки (комиссару и журналисту покажут «❌»). Защитить одного и того же игрока 2 ночи подряд нельзя.</p>',
+    rules: [
+      'С мафией не просыпается',
+      'Если есть Дьявол — просыпается с ним, могут совещаться жестами. Может дать ему иммунитет',
+      'Для комиссара — чёрная проверка 👎',
+      'Если мафии нет, но адвокат остался один на один с мирным — побеждает вся мафия',
+      'В ситуации 1 мафия + 1 адвокат + 2 красных победа 2/2 не объявляется (мафия и адвокат не знают друг друга)'
+    ]
+  },
+  {
+    id: 'dyavol', name: 'Дьявол', team: 'black',
+    icon: 'flame',
+    brief: 'Один раз за игру обращает игрока в чёрного.',
+    body: '<p>Играет на стороне мафии, но НЕ знает, кто мафия. Просыпается вместе с адвокатом (если он есть) — могут совещаться. Один раз за игру может любого игрока обратить в чёрного. Если обратит мафию — эффекта не будет. Если не хочет обращать — показывает ❌.</p>',
+    rules: [
+      'Для комиссара — чёрная проверка 👎',
+      'С мафией не просыпается, только с адвокатом',
+      'Может обратить адвоката в стреляющую мафию',
+      'Себя обратить не может',
+      'Обращённый игрок знакомится с адвокатом и дьяволом, перестаёт просыпаться за свою роль и становится чёрной проверкой 👎'
+    ]
+  },
+  {
+    id: 'gastarbaiter', name: 'Гастарбайтер', team: 'black',
+    icon: 'mask',
+    brief: 'Делает фальшивые документы — переворачивает проверку шерифа.',
+    body: '<p>Каждую ночь выбирает одного игрока и делает ему фальшивые документы. Если в эту ночь комиссар проверяет этого игрока — он получит <strong>противоположную</strong> проверку. Мирный → чёрный 👎, чёрный → мирный 👍, серый → мирный 👍. Действие работает только на одну ночь.</p>',
+    rules: [
+      'С мафией не просыпается и не знает её',
+      'Для комиссара — чёрная проверка 👎',
+      'Если остаётся в столе один на один с красным — побеждает вся команда мафии'
+    ]
+  }
+];
+
+const TEAM_LABELS = {
+  red: { label: 'Красная команда', color: '#d63c3c' },
+  black: { label: 'Чёрная команда', color: '#8d6cd0' },
+  gray: { label: 'Серая команда', color: '#888888' }
+};
+
+const ICONS = {
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg>',
+  cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></svg>',
+  pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="11" height="15" rx="1.5" transform="rotate(-8 8 13)"/><rect x="10" y="3" width="11" height="15" rx="1.5" transform="rotate(8 16 11)"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+  sword: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 17.5L21 21l-1-4-3.5-3.5M14.5 17.5L4 7V4h3l10.5 10.5M14.5 17.5l2-2.5"/><path d="M9 12l-3 3-2-2 3-3"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4 1.5-7.5L3 9l6.5-.5L12 2z"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><circle cx="17" cy="6" r="1" fill="currentColor"/><circle cx="20" cy="10" r="0.7" fill="currentColor"/></svg>',
+  skull: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C7 2 4 5.5 4 10v4c0 1 .5 2 2 2v3c0 1 1 2 2 2h1v-2h2v2h2v-2h2v2h1c1 0 2-1 2-2v-3c1.5 0 2-1 2-2v-4c0-4.5-3-8-8-8z"/><circle cx="9" cy="11" r="1.5" fill="currentColor"/><circle cx="15" cy="11" r="1.5" fill="currentColor"/></svg>',
+  fedora: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 16h18M5 16c0-5 3-9 7-9s7 4 7 9"/><ellipse cx="12" cy="16" rx="9" ry="2"/></svg>',
+  crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18l-1-9 5 4 5-7 5 7 5-4-1 9z"/><path d="M3 18h18"/></svg>',
+  scales: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v18M5 21h14M5 8l-3 6h6zM19 8l-3 6h6zM5 8h14"/></svg>',
+  flame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2s4 4 4 9-2 7-4 7-4-2-4-7c0-2 1-4 1-4s-3 1-3 5c0 4 3 7 6 7s6-3 6-7c0-7-6-10-6-10z"/></svg>',
+  mask: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8c0-2 2-4 8-4s8 2 8 4v4c0 5-4 8-8 8s-8-3-8-8V8z"/><circle cx="9" cy="11" r="1.2" fill="currentColor"/><circle cx="15" cy="11" r="1.2" fill="currentColor"/><path d="M9 15c1 1 2 1 3 1s2 0 3-1"/></svg>'
+};
+
+/* ============ RENDER ROLES ============ */
+const grid = document.getElementById('rolesGrid');
+ROLES.forEach((role, idx) => {
+  const card = document.createElement('button');
+  card.className = `role-card team-${role.team}`;
+  card.dataset.team = role.team;
+  card.dataset.id = role.id;
+  card.setAttribute('aria-label', `Подробнее о роли ${role.name}`);
+  card.innerHTML = `
+    <div class="role-icon-wrap"><div class="role-icon">${ICONS[role.icon] || ICONS.star}</div></div>
+    <div class="role-name">${role.name}</div>
+    <div class="role-team"><span class="dot"></span>${TEAM_LABELS[role.team].label}</div>
+    <div class="role-brief">${role.brief}</div>
+    <div class="role-more">Подробнее →</div>
+  `;
+  card.addEventListener('click', () => openModal(role));
+  grid.appendChild(card);
+});
+
+/* ============ MODAL ============ */
+const backdrop = document.getElementById('modalBackdrop');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const modalTeam = document.getElementById('modalTeam');
+const modalTeamBar = document.getElementById('modalTeamBar');
+
+function openModal(role) {
+  const team = TEAM_LABELS[role.team];
+  modalTitle.textContent = role.name + (role.alias ? ` (${role.alias})` : '');
+  modalTeam.innerHTML = `<span class="dot" style="background:${team.color}"></span>${team.label}`;
+  modalTeamBar.style.background = team.color;
+  let html = role.body;
+  if (role.rules && role.rules.length) {
+    html += '<div class="modal-rules"><h4>Особенности</h4><ul>' + role.rules.map(r => `<li>${r}</li>`).join('') + '</ul></div>';
+  }
+  modalBody.innerHTML = html;
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modalClose').addEventListener('click', closeModal);
+backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && backdrop.classList.contains('open')) closeModal(); });
+
+/* ============ PRIVACY MODAL ============ */
+const privacyBackdrop = document.getElementById('privacyBackdrop');
+function openPrivacy(e) {
+  if (e) e.preventDefault();
+  privacyBackdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePrivacy() {
+  privacyBackdrop.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('openPrivacy').addEventListener('click', openPrivacy);
+document.getElementById('privacyClose').addEventListener('click', closePrivacy);
+privacyBackdrop.addEventListener('click', e => { if (e.target === privacyBackdrop) closePrivacy(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && privacyBackdrop.classList.contains('open')) closePrivacy(); });
+
+/* ============ ROLE FILTER ============ */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.role-card').forEach(card => {
+      const show = filter === 'all' || card.dataset.team === filter;
+      card.style.display = show ? '' : 'none';
+    });
+  });
+});
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.tab-content[data-content="${btn.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ============ FAQ ============ */
+const FAQ = [
+  { q: 'Я никогда не играл в мафию. Можно прийти новичком?', a: 'Да! Новичкам не нужно знать правила заранее — ведущий объяснит всё перед началом игры. Если хотите подготовиться — изучите роли на этом сайте или загляните в наш <a href="https://t.me/awaken_community_bot" target="_blank" rel="noopener">Telegram-бот</a>. А ещё для новичков есть скидка: вторая игра — всего 500 ₽.' },
+  { q: 'Где проходят игры?', a: 'Игры проходят в Москве. Постоянного адреса нет — мы выбираем локации в зависимости от условий и бронируем под группу игроков. Точный адрес каждой игры публикуется в <a href="https://t.me/AwakenMafia" target="_blank" rel="noopener">Telegram-чате клуба</a> за несколько дней до игры.' },
+  { q: 'В какие дни и во сколько играем?', a: 'Три раза в неделю: <strong>среда, пятница, воскресенье</strong>. Сбор в 19:00, начало игры в 19:30, заканчиваем не позже 00:00. Иногда возможны переносы из-за низкой записи — в этом случае мы заранее предупреждаем.' },
+  { q: 'Сколько стоит участие?', a: 'Разовая игра — 1 000 ₽. Если планируете играть регулярно — выгоднее взять <a href="#price" style="color:var(--gold)">абонемент</a>: Standard на 3 игры за 2 699 ₽, Gold на 5 игр за 4 249 ₽ (экономия 751 ₽), Ultra на 7 игр за 5 599 ₽ (экономия 1 401 ₽). Реквизиты для оплаты приходят через <a href="https://t.me/awaken_community_bot" target="_blank" rel="noopener">бота @awaken_community_bot</a>.' },
+  { q: 'Какие есть скидки?', a: 'Сразу несколько вариантов:<br>• <strong>Новичкам</strong> — вторая игра за 500 ₽<br>• <strong>За каждого приведённого друга</strong> — 30% скидка на свою игру<br>• <strong>Привёл 3 новых игроков</strong> — играешь вечер бесплатно<br>• <strong>Привёл 4+ игроков</strong> — получаешь 200 бонусов AWAKEN (1 = 1 ₽), их можно тратить на следующие игры, мероприятия и турниры.' },
+  { q: 'Что если я не смогу прийти?', a: 'При отмене менее чем за 24 часа предоплата сгорает. По уважительной причине — переносим оплату на следующую игру. Если игра отменена по вине организаторов или из-за низкой записи — полный возврат или перенос.' },
+  { q: 'Сколько ролей в игре и какие есть команды?', a: 'У нас 16 уникальных ролей в трёх лагерях: красные (мирные), чёрные (мафия) и серые (одиночки — Маньяк, Девственник). Состав ролей зависит от количества игроков за столом.' },
+  { q: 'Что делать, если не согласен с решением ведущего?', a: 'Главное правило клуба: ведущий всегда прав, все спорные ситуации в игре решает только он. После игры вы можете в вежливой форме обсудить вопрос с организаторами — например, написать админу <a href="https://t.me/Alaska_mc" target="_blank" rel="noopener">@Alaska_mc</a>.' },
+  { q: 'Можно ли прийти компанией?', a: 'Конечно. Это даже выгодно: за каждого приведённого друга — 30% скидка, за троих новых игроков — играете бесплатно. Просто укажите в форме записи или в комментарии, что вас будет несколько.' },
+  { q: 'Что такое «фол» и за что его дают?', a: 'Фол — это предупреждение за нарушение. 3 фола — лишение минуты речи, 4 фола — выход из-за стола без последнего слова. Полный список нарушений смотрите в разделе «Правила игры».' },
+  { q: 'Что если я опоздаю?', a: 'Опоздание, ранний уход или частичное присутствие — оплата остаётся в полном объёме. Сбор в 19:00, в 19:30 уже начинаем — приходите вовремя, чтобы не пропустить раздачу ролей.' },
+  { q: 'Можно ли рекламировать в чате клуба свои услуги?', a: 'Реклама личных услуг и сторонних клубов в общем чате запрещена. Можно приглашать участников чата на наши же игры клуба «Awaken». Если есть вопросы — напишите админу <a href="https://t.me/Alaska_mc" target="_blank" rel="noopener">@Alaska_mc</a>.' }
+];
+const faqList = document.getElementById('faqList');
+FAQ.forEach((item, i) => {
+  const el = document.createElement('div');
+  el.className = 'faq-item';
+  el.innerHTML = `
+    <button class="faq-q" aria-expanded="false">
+      <span>${item.q}</span>
+      <span class="plus" aria-hidden="true"></span>
+    </button>
+    <div class="faq-a"><div class="faq-a-inner">${item.a}</div></div>
+  `;
+  const btn = el.querySelector('.faq-q');
+  const ans = el.querySelector('.faq-a');
+  btn.addEventListener('click', () => {
+    const open = el.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+    ans.style.maxHeight = open ? ans.scrollHeight + 'px' : '0';
+  });
+  faqList.appendChild(el);
+});
+
+/* ============ NAV SCROLL ============ */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+/* ============ MOBILE MENU ============ */
+const navToggle = document.getElementById('navToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+navToggle.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('open');
+  navToggle.classList.toggle('open', open);
+  navToggle.setAttribute('aria-expanded', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  mobileMenu.classList.remove('open');
+  navToggle.classList.remove('open');
+  document.body.style.overflow = '';
+}));
+
+/* ============ SCROLL REVEAL ============ */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
+
+/* ============ CONFIG ============ */
+/*
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  НАСТРОЙКА ОТПРАВКИ ЗАЯВОК В TELEGRAM                                ║
+  ║                                                                       ║
+  ║  Чтобы заявки автоматически приходили админу в Telegram, нужно:      ║
+  ║                                                                       ║
+  ║  1. Получить токен бота от @BotFather (если не помните токен         ║
+  ║     @awaken_community_bot — напишите /mybots в @BotFather)           ║
+  ║  2. Получить chat_id админа:                                         ║
+  ║     • Напишите /start боту от имени админа                           ║
+  ║     • Откройте https://api.telegram.org/bot<ТОКЕН>/getUpdates        ║
+  ║     • Скопируйте число из "chat":{"id":XXXXXXXXX                     ║
+  ║  3. Вставьте значения ниже                                           ║
+  ║                                                                       ║
+  ║  ⚠ ВНИМАНИЕ: токен виден в коде сайта. Это нормально для маленького  ║
+  ║    клуба, но в худшем случае кто-то может слать сообщения через      ║
+  ║    вашего бота. Если важна безопасность — используйте отдельный      ║
+  ║    "форменный" бот, не основной @awaken_community_bot.               ║
+  ║                                                                       ║
+  ║  Если оставить пустыми — форма откроет чат с админом @Alaska_mc      ║
+  ║  и пользователь сам отправит заявку.                                 ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+*/
+const CONFIG = {
+  TG_BOT_TOKEN: '',                          // ← Вставьте токен бота
+  TG_ADMIN_CHAT_ID: '',                      // ← Вставьте chat_id админа
+  TG_ADMIN_USERNAME: 'Alaska_mc',
+  TG_BOT_USERNAME: 'awaken_community_bot',
+  EMAIL: 'awaken.mafia@gmail.com'
+};
+
+/* ============ FORM ============ */
+const form = document.getElementById('bookingForm');
+const success = document.getElementById('formSuccess');
+const submitBtn = form.querySelector('.form-submit');
+
+function buildMessage(data) {
+  let msg = '🎲 <b>Новая заявка с сайта Awaken Mafia</b>\n\n';
+  msg += `👤 <b>Имя:</b> ${data.name}\n`;
+  msg += `📞 <b>Телефон:</b> ${data.phone}\n`;
+  if (data.telegram) msg += `✈️ <b>Telegram:</b> ${data.telegram}\n`;
+  msg += `🎯 <b>Опыт:</b> ${data.experience}\n`;
+  if (data.date) msg += `📅 <b>Желаемая дата:</b> ${data.date}\n`;
+  if (data.message) msg += `\n💬 <b>Комментарий:</b>\n${data.message}`;
+  return msg;
+}
+
+function buildPlainMessage(data) {
+  // Same content but without HTML tags for clipboard fallback
+  return buildMessage(data).replace(/<\/?b>/g, '');
+}
+
+function showSuccess() {
+  form.style.transition = 'opacity 0.4s';
+  form.style.opacity = '0';
+  setTimeout(() => {
+    form.style.display = 'none';
+    success.classList.add('show');
+  }, 400);
+}
+
+async function submitToTelegram(data) {
+  const message = buildMessage(data);
+  const tokenSet = CONFIG.TG_BOT_TOKEN && CONFIG.TG_ADMIN_CHAT_ID;
+
+  if (tokenSet) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${CONFIG.TG_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CONFIG.TG_ADMIN_CHAT_ID,
+          text: message,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true
+        })
+      });
+      if (res.ok) return { ok: true, mode: 'auto' };
+    } catch (err) {
+      console.error('Telegram API error:', err);
+    }
+  }
+
+  // Fallback: copy to clipboard and open chat with admin
+  const plain = buildPlainMessage(data);
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(plain);
+    }
+  } catch (e) { /* clipboard not available */ }
+  window.open(`https://t.me/${CONFIG.TG_ADMIN_USERNAME}`, '_blank', 'noopener');
+  return { ok: true, mode: 'manual' };
+}
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = form.name.value.trim();
+  const phone = form.phone.value.trim();
+  const consent = form.consent.checked;
+
+  if (name.length < 2) { form.name.focus(); return; }
+  if (phone.length < 10) { form.phone.focus(); return; }
+  if (!consent) { alert('Пожалуйста, подтвердите согласие на обработку данных'); return; }
+
+  const data = {
+    name,
+    phone,
+    telegram: form.telegram.value.trim(),
+    experience: form.experience.value,
+    date: form.date.value,
+    message: form.message.value.trim()
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Отправляем...';
+
+  const result = await submitToTelegram(data);
+
+  if (result.mode === 'manual') {
+    // Show success but with adjusted text
+    const successHeading = success.querySelector('h3');
+    const successText = success.querySelector('p');
+    if (successHeading) successHeading.textContent = 'Открываем Telegram...';
+    if (successText) successText.innerHTML = `Текст заявки скопирован в буфер обмена.<br>Вставьте его в чат с админом <a href="https://t.me/${CONFIG.TG_ADMIN_USERNAME}" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline">@${CONFIG.TG_ADMIN_USERNAME}</a> и отправьте.`;
+  }
+  showSuccess();
+});
+
+/* ============ PHONE FORMAT ============ */
+const phoneInput = document.getElementById('phone');
+phoneInput.addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.startsWith('8')) v = '7' + v.slice(1);
+  if (!v.startsWith('7') && v.length > 0) v = '7' + v;
+  v = v.slice(0, 11);
+  let f = '';
+  if (v.length > 0) f = '+7';
+  if (v.length > 1) f += ' (' + v.slice(1, 4);
+  if (v.length >= 4) f += ') ' + v.slice(4, 7);
+  if (v.length >= 7) f += '-' + v.slice(7, 9);
+  if (v.length >= 9) f += '-' + v.slice(9, 11);
+  e.target.value = f;
+});
+
+/* ============ MIN DATE ============ */
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('date').setAttribute('min', today);
+</script>
+
+</body>
+</html>
